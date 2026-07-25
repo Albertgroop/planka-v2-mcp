@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve `@goldpulpy/planka-v2-mcp`. This project is a TypeScript MCP server for Planka v2.x, so changes should preserve compatibility with Planka v2 APIs and MCP clients.
+Thanks for helping improve `@albertgroop/planka-v2-mcp`. This project is a TypeScript MCP server for Planka v2.x, so changes should preserve compatibility with Planka v2 APIs and MCP clients.
 
 ## Development Setup
 

@@ -5,22 +5,22 @@
 Give your AI agents structured, secure access to projects, boards, cards, tasks, comments, labels, and workflows through the Model Context Protocol (MCP).
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@goldpulpy/planka-v2-mcp">
+  <a href="https://www.npmjs.com/package/@albertgroop/planka-v2-mcp">
     <img
       alt="npm version"
-      src="https://img.shields.io/npm/v/%40goldpulpy%2Fplanka-v2-mcp"
+      src="https://img.shields.io/npm/v/%40albertgroop%2Fplanka-v2-mcp"
     />
   </a>
-  <a href="https://www.npmjs.com/package/@goldpulpy/planka-v2-mcp">
+  <a href="https://www.npmjs.com/package/@albertgroop/planka-v2-mcp">
     <img
       alt="npm downloads"
-      src="https://img.shields.io/npm/dm/%40goldpulpy%2Fplanka-v2-mcp"
+      src="https://img.shields.io/npm/dm/%40albertgroop%2Fplanka-v2-mcp"
     />
   </a>
-  <a href="https://github.com/goldpulpy/planka-v2-mcp/actions/workflows/ci.yml">
+  <a href="https://github.com/Albertgroop/planka-v2-mcp/actions/workflows/ci.yml">
     <img
       alt="CI"
-      src="https://img.shields.io/github/actions/workflow/status/goldpulpy/planka-v2-mcp/ci.yml?branch=main&label=CI"
+      src="https://img.shields.io/github/actions/workflow/status/Albertgroop/planka-v2-mcp/ci.yml?branch=main&label=CI"
     />
   </a>
   <img alt="Node.js" src="https://img.shields.io/badge/node-%3E%3D18-339933" />
@@ -172,7 +172,7 @@ The core config block is always:
 ```json
 {
   "command": "npx",
-  "args": ["-y", "@goldpulpy/planka-v2-mcp@latest"],
+  "args": ["-y", "@albertgroop/planka-v2-mcp@latest"],
   "env": {
     "PLANKA_BASE_URL": "https://your-planka-instance.com",
     "PLANKA_AGENT_EMAIL": "agent@yourdomain.com",
@@ -222,7 +222,7 @@ Most MCP clients share the exact same `mcpServers` JSON shape - only the config 
   "mcpServers": {
     "planka-mcp": {
       "command": "npx",
-      "args": ["-y", "@goldpulpy/planka-v2-mcp@latest"],
+      "args": ["-y", "@albertgroop/planka-v2-mcp@latest"],
       "env": {
         "PLANKA_BASE_URL": "https://your-planka-instance.com",
         "PLANKA_AGENT_EMAIL": "agent@yourdomain.com",
@@ -254,7 +254,7 @@ Drop this block into the relevant config file:
 >   --env PLANKA_AGENT_EMAIL=agent@yourdomain.com \
 >   --env PLANKA_AGENT_PASSWORD=your-secure-password \
 >   --env PLANKA_IGNORE_SSL=true \
->   -- npx -y @goldpulpy/planka-v2-mcp@latest
+>   -- npx -y @albertgroop/planka-v2-mcp@latest
 > ```
 
 Restart the client after saving.
@@ -270,7 +270,7 @@ Edit `~/.codex/config.toml`:
 ```toml
 [mcp_servers.planka-mcp]
 command = "npx"
-args = ["-y", "@goldpulpy/planka-v2-mcp@latest"]
+args = ["-y", "@albertgroop/planka-v2-mcp@latest"]
 
 [mcp_servers.planka-mcp.env]
 PLANKA_BASE_URL = "https://your-planka-instance.com"
@@ -282,7 +282,7 @@ PLANKA_IGNORE_SSL = "true"
 Or add it in one line:
 
 ```bash
-codex mcp add planka-mcp -- npx -y @goldpulpy/planka-v2-mcp@latest
+codex mcp add planka-mcp -- npx -y @albertgroop/planka-v2-mcp@latest
 ```
 
 then set the `PLANKA_*` variables in the generated `[mcp_servers.planka-mcp.env]` block.
@@ -301,7 +301,7 @@ mcpServers:
     command: npx
     args:
       - -y
-      - "@goldpulpy/planka-v2-mcp@latest"
+      - "@albertgroop/planka-v2-mcp@latest"
     env:
       PLANKA_BASE_URL: https://your-planka-instance.com
       PLANKA_AGENT_EMAIL: agent@yourdomain.com
@@ -323,7 +323,7 @@ Edit `~/.config/zed/settings.json` (macOS/Linux) or `%APPDATA%\Zed\settings.json
     "planka-mcp": {
       "source": "custom",
       "command": "npx",
-      "args": ["-y", "@goldpulpy/planka-v2-mcp@latest"],
+      "args": ["-y", "@albertgroop/planka-v2-mcp@latest"],
       "env": {
         "PLANKA_BASE_URL": "https://your-planka-instance.com",
         "PLANKA_AGENT_EMAIL": "agent@yourdomain.com",
@@ -346,7 +346,7 @@ Edit `~/.config/zed/settings.json` (macOS/Linux) or `%APPDATA%\Zed\settings.json
 The server is a standard stdio MCP server - any client that supports the `command` / `args` / `env` shape will work. Point it at:
 
 ```bash
-npx -y @goldpulpy/planka-v2-mcp@latest
+npx -y @albertgroop/planka-v2-mcp@latest
 ```
 
 with the four `PLANKA_*` environment variables set as shown above.
@@ -378,7 +378,7 @@ email/password:
 ```json
 {
   "command": "npx",
-  "args": ["-y", "@goldpulpy/planka-v2-mcp@latest"],
+  "args": ["-y", "@albertgroop/planka-v2-mcp@latest"],
   "env": {
     "PLANKA_BASE_URL": "https://your-planka-instance.com",
     "PLANKA_API_KEY": "your-planka-api-key",
@@ -495,7 +495,7 @@ Contributions are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
 
 ## Acknowledgements
 
-This project is forked from [Navya-Tecnologia/planka-v2-mcp](https://github.com/Navya-Tecnologia/planka-v2-mcp), which builds on [bradrisse/kanban-mcp](https://github.com/bradrisse/kanban-mcp). Thanks to [@virapa](https://github.com/virapa) and [@bradrisse](https://github.com/bradrisse) for the foundation behind this codebase.
+This project is forked from [goldpulpy/planka-v2-mcp](https://github.com/goldpulpy/planka-v2-mcp), which is itself forked from [Navya-Tecnologia/planka-v2-mcp](https://github.com/Navya-Tecnologia/planka-v2-mcp) and builds on [bradrisse/kanban-mcp](https://github.com/bradrisse/kanban-mcp). Thanks to [@goldpulpy](https://github.com/goldpulpy), [@virapa](https://github.com/virapa), and [@bradrisse](https://github.com/bradrisse) for the foundation behind this codebase.
 
 ## License
 

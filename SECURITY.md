@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Security fixes are handled for the current published major version of `@goldpulpy/planka-v2-mcp`.
+Security fixes are handled for the current published major version of `@albertgroop/planka-v2-mcp`.
 
 | Version | Supported |
 | ------- | --------- |

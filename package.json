@@ -1,14 +1,17 @@
 {
-  "name": "@goldpulpy/planka-v2-mcp",
-  "version": "1.0.1",
-  "description": "MCP server for Planka v2.x Kanban board",
+  "name": "@albertgroop/planka-v2-mcp",
+  "version": "1.1.0",
+  "description": "MCP server for Planka v2.x Kanban board (with API key / X-Api-Key auth support)",
   "license": "MIT",
   "author": "goldpulpy <sawsani1928@gmail.com>",
-  "homepage": "https://github.com/goldpulpy/planka-v2-mcp",
-  "bugs": "https://github.com/goldpulpy/planka-v2-mcp/issues",
+  "contributors": [
+    "Hubert de Rocquigny <hubert@rocquigny.fr>"
+  ],
+  "homepage": "https://github.com/Albertgroop/planka-v2-mcp",
+  "bugs": "https://github.com/Albertgroop/planka-v2-mcp/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/goldpulpy/planka-v2-mcp.git"
+    "url": "https://github.com/Albertgroop/planka-v2-mcp.git"
   },
   "type": "module",
   "engines": {
@@ -16,6 +19,9 @@
   },
   "bin": {
     "planka-mcp": "dist/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "dist",
