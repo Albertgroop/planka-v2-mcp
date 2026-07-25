@@ -84,18 +84,29 @@ async function authenticateAgent(): Promise<string> {
 }
 
 async function getAuthToken(): Promise<string> {
-  // A per-user Planka API key (Planka v2.x) is used verbatim as the Bearer
-  // token. This is required when the instance runs with OIDC_ENFORCED=true,
-  // because POST /api/access-tokens (email/password login) is then disabled.
-  const apiKey = process.env.PLANKA_API_KEY;
-  if (apiKey) {
-    return apiKey;
-  }
-
   if (agentToken) {
     return agentToken;
   }
   return authenticateAgent();
+}
+
+/**
+ * Builds the authentication headers for a Planka API request.
+ *
+ * A per-user Planka API key (Planka v2.x) authenticates via the `X-Api-Key`
+ * header and is used verbatim - no login round-trip. This is required when the
+ * instance runs with OIDC_ENFORCED=true, because POST /api/access-tokens
+ * (email/password login) is then disabled. Otherwise we fall back to
+ * email/password login and send the resulting JWT as a Bearer token.
+ */
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const apiKey = process.env.PLANKA_API_KEY;
+  if (apiKey) {
+    return { "X-Api-Key": apiKey };
+  }
+
+  const token = await getAuthToken();
+  return { Authorization: `Bearer ${token}` };
 }
 
 export async function plankaRequest(path: string, options: RequestOptions = {}): Promise<unknown> {
@@ -131,11 +142,10 @@ export async function plankaRequest(path: string, options: RequestOptions = {}):
     delete headers["Content-Type"];
   }
 
-  // Add authentication token if not skipped
+  // Add authentication headers if not skipped
   if (!options.skipAuth) {
     try {
-      const token = await getAuthToken();
-      headers.Authorization = `Bearer ${token}`;
+      Object.assign(headers, await getAuthHeaders());
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to get authentication token: ${errorMessage}`);
