@@ -35,7 +35,10 @@ export async function getAdminUserId(): Promise<string | null> {
       }
     }
 
-    // Fallback to agent email
+    // Fallback to agent email.
+    // In API key mode (PLANKA_API_KEY set) the agent password is not needed,
+    // but PLANKA_AGENT_EMAIL may still be provided so this lookup can resolve
+    // the acting user's ID without falling back to an admin address.
     const agentEmail = process.env.PLANKA_AGENT_EMAIL;
     if (agentEmail) {
       const id = await getUserIdByEmail(agentEmail);
