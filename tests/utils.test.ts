@@ -9,6 +9,7 @@ describe("common utils", () => {
     delete process.env.PLANKA_BASE_URL;
     delete process.env.PLANKA_AGENT_EMAIL;
     delete process.env.PLANKA_AGENT_PASSWORD;
+    delete process.env.PLANKA_API_KEY;
     jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
@@ -118,6 +119,48 @@ describe("common utils", () => {
       "https://planka.example/api/projects",
       expect.objectContaining({
         headers: expect.objectContaining({ Authorization: "Bearer token-1" }),
+      }),
+    );
+  });
+
+  test("getAuthToken uses PLANKA_API_KEY directly and never calls /api/access-tokens", async () => {
+    process.env.PLANKA_BASE_URL = "https://planka.example";
+    process.env.PLANKA_API_KEY = "api-key-123";
+    // Present but must be ignored for login when an API key is configured.
+    process.env.PLANKA_AGENT_EMAIL = "agent@example.test";
+    process.env.PLANKA_AGENT_PASSWORD = "secret";
+    const fetchMock = jest.fn<typeof fetch>().mockImplementation(
+      async () =>
+        new Response(JSON.stringify({ items: [] }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }),
+    );
+    global.fetch = fetchMock;
+
+    const { plankaRequest } = await import("../common/utils.js");
+
+    await plankaRequest("/api/users");
+    await plankaRequest("/api/projects");
+
+    // Only the two data requests happen - no login round-trip.
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).not.toHaveBeenCalledWith(
+      "https://planka.example/api/access-tokens",
+      expect.anything(),
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      "https://planka.example/api/users",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer api-key-123" }),
+      }),
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      "https://planka.example/api/projects",
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer api-key-123" }),
       }),
     );
   });

@@ -41,7 +41,7 @@ async function authenticateAgent(): Promise<string> {
 
   if (!email || !password) {
     throw new Error(
-      "PLANKA_AGENT_EMAIL and PLANKA_AGENT_PASSWORD environment variables are required",
+      "Authentication requires either PLANKA_API_KEY, or the PLANKA_AGENT_EMAIL and PLANKA_AGENT_PASSWORD environment variables",
     );
   }
 
@@ -84,6 +84,14 @@ async function authenticateAgent(): Promise<string> {
 }
 
 async function getAuthToken(): Promise<string> {
+  // A per-user Planka API key (Planka v2.x) is used verbatim as the Bearer
+  // token. This is required when the instance runs with OIDC_ENFORCED=true,
+  // because POST /api/access-tokens (email/password login) is then disabled.
+  const apiKey = process.env.PLANKA_API_KEY;
+  if (apiKey) {
+    return apiKey;
+  }
+
   if (agentToken) {
     return agentToken;
   }

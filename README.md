@@ -355,12 +355,44 @@ with the four `PLANKA_*` environment variables set as shown above.
 
 ## Environment Variables
 
-| Variable                | Required | Default | Description                                          |
-| ----------------------- | :------: | :-----: | ---------------------------------------------------- |
-| `PLANKA_BASE_URL`       |    ✅    |    -    | Full URL of your Planka instance                     |
-| `PLANKA_AGENT_EMAIL`    |    ✅    |    -    | Login email for the dedicated agent user             |
-| `PLANKA_AGENT_PASSWORD` |    ✅    |    -    | Password for the agent user                          |
-| `PLANKA_IGNORE_SSL`     |    ❌    | `false` | Skip SSL verification - self-signed/local certs only |
+| Variable                | Required | Default | Description                                                                |
+| ----------------------- | :------: | :-----: | -------------------------------------------------------------------------- |
+| `PLANKA_BASE_URL`       |    ✅    |    -    | Full URL of your Planka instance                                           |
+| `PLANKA_API_KEY`        |   ⚠️     |    -    | Per-user Planka API key. Alternative to email/password (see below)         |
+| `PLANKA_AGENT_EMAIL`    |   ⚠️     |    -    | Login email for the dedicated agent user                                   |
+| `PLANKA_AGENT_PASSWORD` |   ⚠️     |    -    | Password for the agent user                                                |
+| `PLANKA_IGNORE_SSL`     |    ❌    | `false` | Skip SSL verification - self-signed/local certs only                       |
+
+> [!NOTE]
+> ⚠️ Authentication requires **either** `PLANKA_API_KEY` **or** the
+> `PLANKA_AGENT_EMAIL` + `PLANKA_AGENT_PASSWORD` pair. If `PLANKA_API_KEY` is set it is
+> used directly and the email/password are ignored for login. See
+> [API Key Authentication](#api-key-authentication-oidc_enforced).
+
+## API Key Authentication (OIDC_ENFORCED)
+
+Planka v2.x lets each user generate a personal API key that works as a Bearer token on
+every `/api/` route. Set it via `PLANKA_API_KEY` instead of the agent email/password:
+
+```json
+{
+  "command": "npx",
+  "args": ["-y", "@goldpulpy/planka-v2-mcp@latest"],
+  "env": {
+    "PLANKA_BASE_URL": "https://your-planka-instance.com",
+    "PLANKA_API_KEY": "your-planka-api-key",
+    "PLANKA_IGNORE_SSL": "true"
+  }
+}
+```
+
+This is **required** when your Planka instance runs with `OIDC_ENFORCED=true`: in that
+mode the `POST /api/access-tokens` endpoint (email/password login) is disabled, so the
+server cannot authenticate with a password and must use an API key.
+
+When `PLANKA_API_KEY` is set, `PLANKA_AGENT_PASSWORD` is not needed. You may still keep
+`PLANKA_AGENT_EMAIL` defined (without a password): it lets the admin-user lookup resolve
+the acting user's ID for operations that need it.
 
 ## Security
 
