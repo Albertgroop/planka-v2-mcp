@@ -123,7 +123,7 @@ describe("common utils", () => {
     );
   });
 
-  test("getAuthToken uses PLANKA_API_KEY directly and never calls /api/access-tokens", async () => {
+  test("PLANKA_API_KEY authenticates via X-Api-Key and never calls /api/access-tokens", async () => {
     process.env.PLANKA_BASE_URL = "https://planka.example";
     process.env.PLANKA_API_KEY = "api-key-123";
     // Present but must be ignored for login when an API key is configured.
@@ -149,20 +149,26 @@ describe("common utils", () => {
       "https://planka.example/api/access-tokens",
       expect.anything(),
     );
+    // Planka's API key scheme uses the X-Api-Key header, not Bearer auth.
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
       "https://planka.example/api/users",
       expect.objectContaining({
-        headers: expect.objectContaining({ Authorization: "Bearer api-key-123" }),
+        headers: expect.objectContaining({ "X-Api-Key": "api-key-123" }),
       }),
     );
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
       "https://planka.example/api/projects",
       expect.objectContaining({
-        headers: expect.objectContaining({ Authorization: "Bearer api-key-123" }),
+        headers: expect.objectContaining({ "X-Api-Key": "api-key-123" }),
       }),
     );
+    // No Bearer Authorization header is set in API key mode.
+    const sentHeaders = (fetchMock.mock.calls[0]?.[1] as RequestInit | undefined)?.headers as
+      | Record<string, string>
+      | undefined;
+    expect(sentHeaders?.Authorization).toBeUndefined();
   });
 
   test("plankaRequest wraps Planka errors without leaking the request URL", async () => {

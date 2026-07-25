@@ -371,8 +371,9 @@ with the four `PLANKA_*` environment variables set as shown above.
 
 ## API Key Authentication (OIDC_ENFORCED)
 
-Planka v2.x lets each user generate a personal API key that works as a Bearer token on
-every `/api/` route. Set it via `PLANKA_API_KEY` instead of the agent email/password:
+Planka v2.x lets each user generate a personal API key (sent in the `X-Api-Key` header)
+that works on every `/api/` route. Set it via `PLANKA_API_KEY` instead of the agent
+email/password:
 
 ```json
 {
