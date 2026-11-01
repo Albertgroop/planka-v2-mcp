@@ -1,6 +1,6 @@
 {
   "name": "@albertgroop/planka-v2-mcp",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "MCP server for Planka v2.x Kanban board (with API key / X-Api-Key auth support)",
   "license": "MIT",
   "author": "goldpulpy <sawsani1928@gmail.com>",

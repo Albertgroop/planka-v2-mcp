@@ -11,8 +11,11 @@ import { AsyncLocalStorage } from "node:async_hooks";
  * In stdio mode there is no context and the environment variables apply.
  */
 export type RequestContext = {
-  /** The caller's personal Planka API key, sent as `X-Api-Key`. */
-  apiKey: string;
+  /**
+   * The caller's personal Planka API key, sent as `X-Api-Key`. `null` for a
+   * keyless request (tool catalogue only): any Planka call then fails.
+   */
+  apiKey: string | null;
   /**
    * The caller's Planka user id, resolved lazily from `/api/users/me` and
    * cached for the rest of the request. `null` once a lookup has failed.

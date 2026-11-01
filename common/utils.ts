@@ -105,6 +105,11 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
   // to the environment here, or a request would run under a shared identity.
   const context = currentRequestContext();
   if (context) {
+    if (!context.apiKey) {
+      // Keyless request (tool catalogue only): never reach Planka, and above
+      // all never with the environment's credentials.
+      throw new Error("No Planka API key for this request");
+    }
     return { "X-Api-Key": context.apiKey };
   }
 
