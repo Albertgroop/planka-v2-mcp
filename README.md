@@ -432,7 +432,7 @@ MCP_TRANSPORT=http PLANKA_BASE_URL=https://planka.example.com node dist/index.js
 - **Never publish this port to the internet**: anyone who can reach it can use any
   Planka key they hold. Expose only the gateway.
 
-Docker images (`hub2rock/planka-v2-mcp`): a git tag `vX.Y.Z` publishes `X.Y.Z`,
+Docker images (`hub2rock/planka-v2-mcp`): releasing `X.Y.Z` (a merge to `main` that bumps the version, see [CHANGELOG.md](CHANGELOG.md)) publishes `X.Y.Z`,
 `X.Y`, `X` and `latest`; every push to `main` publishes `latest` and `sha-<commit>`.
 Use `X.Y` in production: `docker compose pull` then brings bug fixes, never a new
 minor version.
