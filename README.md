@@ -422,8 +422,10 @@ MCP_TRANSPORT=http PLANKA_BASE_URL=https://planka.example.com node dist/index.js
 | `HTTP_PORT`          | `8000`             | Listen port                                          |
 | `MCP_API_KEY_HEADER` | `X-Planka-Api-Key` | Header carrying the caller's Planka API key          |
 
-- **Each request uses the key in `MCP_API_KEY_HEADER`, and only that key.** A
-  request without it is refused (401). `PLANKA_API_KEY` and the agent
+- **Each request uses the key in `MCP_API_KEY_HEADER`, and only that key.** Without
+  it, only the tool catalogue can be read (`initialize`, `notifications/initialized`,
+  `tools/list`, `ping`, alone or batched); anything else is refused (401). A keyless
+  request still runs with no key at all: any Planka call in it fails. `PLANKA_API_KEY` and the agent
   email/password are ignored in this mode, so no request can fall back to a shared
   identity. The acting user (e.g. who is added to a new board) is the owner of the
   key, resolved through `/api/users/me`.

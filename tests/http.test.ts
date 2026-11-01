@@ -101,16 +101,54 @@ describe("HTTP mode", () => {
     expect(await res.json()).toMatchObject({ status: "ok" });
   });
 
-  test("a request without the key header is refused", async () => {
-    const res = await realFetch(`${base}/mcp`, {
+  async function postWithoutKey(body: unknown) {
+    return realFetch(`${base}/mcp`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
         accept: "application/json, text/event-stream",
       },
-      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
+      body: JSON.stringify(body),
+    });
+  }
+
+  test("without a key, the tool catalogue is served and Planka is never called", async () => {
+    const { Client } = await import("@modelcontextprotocol/sdk/client/index.js");
+    const { StreamableHTTPClientTransport } = await import(
+      "@modelcontextprotocol/sdk/client/streamableHttp.js"
+    );
+    const client = new Client({ name: "test", version: "0" });
+    await client.connect(new StreamableHTTPClientTransport(new URL(`${base}/mcp`)) as Transport);
+    try {
+      const { tools } = await client.listTools();
+      expect(tools.map((t) => t.name)).toContain("mcp_kanban_card_manager");
+      expect(tools.length).toBeGreaterThan(5);
+    } finally {
+      await client.close();
+    }
+    expect(plankaCalls).toHaveLength(0);
+  });
+
+  test("without a key, a tool call is refused before the MCP server runs", async () => {
+    const res = await postWithoutKey({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "tools/call",
+      params: { name: "mcp_kanban_project_board_manager", arguments: { action: "get_projects" } },
     });
     expect(res.status).toBe(401);
+    expect(plankaCalls).toHaveLength(0);
+  });
+
+  test("without a key, a batch mixing the catalogue with anything else is refused", async () => {
+    const res = await postWithoutKey([
+      { jsonrpc: "2.0", id: 1, method: "tools/list" },
+      { jsonrpc: "2.0", id: 2, method: "tools/call", params: { name: "x", arguments: {} } },
+    ]);
+    expect(res.status).toBe(401);
+    for (const body of [[], { jsonrpc: "2.0", id: 1, result: {} }, "tools/list", null]) {
+      expect((await postWithoutKey(body)).status).toBe(401);
+    }
     expect(plankaCalls).toHaveLength(0);
   });
 
@@ -155,5 +193,16 @@ describe("acting user in a request context", () => {
     ]);
     const meCalls = plankaCalls.filter((c) => c.path === "/api/users/me");
     expect(meCalls.map((c) => c.apiKey).sort()).toEqual(["key-alice", "key-bob"]);
+  });
+});
+
+describe("keyless request context", () => {
+  test("a Planka call fails instead of using the environment's key", async () => {
+    const { requestContext } = await import("../common/context.js");
+    const { plankaRequest } = await import("../common/utils.js");
+    await expect(
+      requestContext.run({ apiKey: null }, () => plankaRequest("/api/projects")),
+    ).rejects.toThrow("No Planka API key for this request");
+    expect(plankaCalls).toHaveLength(0);
   });
 });

@@ -5,6 +5,17 @@ changes the version in `package.json`, `.github/workflows/release.yml` publishes
 the Docker image and creates the tag and the GitHub release with that section as
 its description. A version bump without its section here fails the release.
 
+## [1.3.0] – 2026-11-01
+
+- HTTP mode: without a key, the **tool catalogue** can be read. A body made only of
+  `initialize`, `notifications/initialized`, `tools/list` and `ping` is served;
+  anything else (a tool call, a batch that mixes them) is still refused with 401.
+  The gateway can then show the real tools to someone who has not registered their
+  key yet, so nothing needs refreshing once they do.
+- Such a request runs in a request context with no key: a Planka call there fails
+  ("No Planka API key for this request") instead of falling back to
+  `PLANKA_API_KEY` or the agent account.
+
 ## [1.2.0] – 2026-11-01
 
 - **HTTP mode for several users** (`MCP_TRANSPORT=http` or `--http`): Streamable
