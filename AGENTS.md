@@ -36,5 +36,4 @@ Copy `.env.example` for local configuration, but never commit credentials. Use a
 
 ## Releases
 
-Bump the version in `package.json` and `common/version.ts` (a test keeps them equal) in the pull request. After the merge, create the tag `vX.Y.Z` on the merge commit from GitHub › Releases: `docker-publish.yml` then publishes `hub2rock/planka-v2-mcp` as `X.Y.Z`, `X.Y`, `X` and `latest`. The package is no longer published to npm (frozen at 1.1.0); do not reintroduce an npm publish workflow.
-
+In the pull request, bump the version in `package.json` and `common/version.ts` (a test keeps them equal) and add its `## [X.Y.Z] – YYYY-MM-DD` section to `CHANGELOG.md` (`tests/changelog.test.ts` fails without it). On merge, `.github/workflows/release.yml` publishes the Docker image `hub2rock/planka-v2-mcp` (`X.Y.Z`, `X.Y`, `X`) by calling `docker-publish.yml`, then creates the tag `vX.Y.Z` and the GitHub release with that section as description. Nobody pushes tags by hand; a merge that keeps the version releases nothing. The package is no longer published to npm (frozen at 1.1.0); do not reintroduce an npm publish workflow.

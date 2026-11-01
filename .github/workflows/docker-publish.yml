@@ -9,6 +9,14 @@ on:
   # Build only (no push) on pull requests, so a broken Dockerfile shows up
   # before the merge.
   pull_request:
+  # Called by release.yml with the version it is releasing: a tag created by
+  # the workflow's own token does not trigger the `push: tags` event above.
+  workflow_call:
+    inputs:
+      version:
+        description: Version being released (X.Y.Z)
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -39,11 +47,15 @@ jobs:
           tags: |
             # push to main -> rolling :latest
             type=raw,value=latest,enable={{is_default_branch}}
-            # git tag vX.Y.Z -> :X.Y.Z, :X.Y, :X (+ :latest below)
+            # git tag vX.Y.Z pushed by hand -> :X.Y.Z, :X.Y, :X (+ :latest below)
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            # release.yml -> :X.Y.Z, :X.Y, :X for the version it releases
+            type=semver,pattern={{version}},value=${{ inputs.version }},enable=${{ inputs.version != '' }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }},enable=${{ inputs.version != '' }}
+            type=semver,pattern={{major}},value=${{ inputs.version }},enable=${{ inputs.version != '' }}
             # immutable per-commit tag
             type=sha
 
