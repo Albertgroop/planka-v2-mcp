@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-This repository implements a TypeScript ESM MCP server for Planka v2.x. `index.ts` is the executable entry point and registers MCP tools. Resource-level HTTP operations live in `operations/` (for example, `cards.ts` and `taskLists.ts`), while higher-level composed behaviors live in `tools/`. Keep shared types, request setup, error handling, and utilities in `common/`. Jest tests and reusable fixtures belong in `tests/`; generated JavaScript is written to `dist/` and must not be edited directly. OpenSpec change artifacts live under `openspec/`.
+This repository implements a TypeScript ESM MCP server for Planka v2.x. `index.ts` is the executable entry point: it picks the transport (stdio, or HTTP via `common/http.ts`). `server.ts` builds the MCP server and registers the tools; in HTTP mode it is called once per request. In HTTP mode the caller's Planka API key travels in a per-request `AsyncLocalStorage` context (`common/context.ts`): never cache anything user-specific at module level, and never fall back to `PLANKA_*` credentials when a context exists. Resource-level HTTP operations live in `operations/` (for example, `cards.ts` and `taskLists.ts`), while higher-level composed behaviors live in `tools/`. Keep shared types, request setup, error handling, and utilities in `common/`. Jest tests and reusable fixtures belong in `tests/`; generated JavaScript is written to `dist/` and must not be edited directly. OpenSpec change artifacts live under `openspec/`.
 
 ## Build, Test, and Development Commands
 

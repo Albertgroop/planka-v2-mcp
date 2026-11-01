@@ -1,4 +1,5 @@
 import { getUserAgent } from "universal-user-agent";
+import { currentRequestContext } from "./context.js";
 import { createPlankaError } from "./errors.js";
 import { VERSION } from "./version.js";
 
@@ -100,6 +101,13 @@ async function getAuthToken(): Promise<string> {
  * email/password login and send the resulting JWT as a Bearer token.
  */
 async function getAuthHeaders(): Promise<Record<string, string>> {
+  // HTTP mode: the caller's own key, forwarded by the gateway. Never fall back
+  // to the environment here, or a request would run under a shared identity.
+  const context = currentRequestContext();
+  if (context) {
+    return { "X-Api-Key": context.apiKey };
+  }
+
   const apiKey = process.env.PLANKA_API_KEY;
   if (apiKey) {
     return { "X-Api-Key": apiKey };
