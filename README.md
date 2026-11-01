@@ -165,6 +165,13 @@ Project setup completed successfully.
 
 ### Configure Your MCP Client
 
+> [!NOTE]
+> The npm package is frozen at **1.1.0** (stdio only) and is no longer published:
+> new releases ship as the Docker image `hub2rock/planka-v2-mcp` (see
+> [HTTP Mode](#http-mode-multi-user-behind-an-authentication-gateway)). The `npx`
+> setup below keeps working for a single local user; to run a newer version locally,
+> use a local build.
+
 Every MCP-compatible client uses the same underlying command - only the config file location (and occasionally the JSON wrapper) differs. See [Client Configuration Examples](#client-configuration-examples) below for your specific tool.
 
 The core config block is always:

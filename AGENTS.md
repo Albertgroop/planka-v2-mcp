@@ -33,3 +33,8 @@ Write short, imperative commit subjects. Prefer the established Conventional Com
 ## Security & Configuration
 
 Copy `.env.example` for local configuration, but never commit credentials. Use a dedicated Planka agent account. Enable `PLANKA_IGNORE_SSL` only for trusted local or self-signed environments.
+
+## Releases
+
+Bump the version in `package.json` and `common/version.ts` (a test keeps them equal) in the pull request. After the merge, create the tag `vX.Y.Z` on the merge commit from GitHub › Releases: `docker-publish.yml` then publishes `hub2rock/planka-v2-mcp` as `X.Y.Z`, `X.Y`, `X` and `latest`. The package is no longer published to npm (frozen at 1.1.0); do not reintroduce an npm publish workflow.
+
