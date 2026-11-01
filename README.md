@@ -395,6 +395,41 @@ When `PLANKA_API_KEY` is set, `PLANKA_AGENT_PASSWORD` is not needed. You may sti
 `PLANKA_AGENT_EMAIL` defined (without a password): it lets the admin-user lookup resolve
 the acting user's ID for operations that need it.
 
+## HTTP Mode (multi-user, behind an authentication gateway)
+
+Besides stdio, the server can run as an HTTP service for several people at once.
+In this mode it does **not** authenticate anyone itself: it is meant to sit on an
+internal network behind an authentication gateway, which signs the person in
+(OAuth/OIDC), looks up **their own** Planka API key and forwards it on every
+request. Planka then attributes each change to that person.
+
+```bash
+MCP_TRANSPORT=http PLANKA_BASE_URL=https://planka.example.com node dist/index.js
+# or: docker run -e PLANKA_BASE_URL=... hub2rock/planka-v2-mcp:1.2
+```
+
+| Variable             | Default            | Description                                          |
+| -------------------- | ------------------ | ---------------------------------------------------- |
+| `MCP_TRANSPORT`      | `stdio`            | `http` to serve MCP over Streamable HTTP (`/mcp`)    |
+| `HTTP_HOST`          | `0.0.0.0`          | Listen address                                       |
+| `HTTP_PORT`          | `8000`             | Listen port                                          |
+| `MCP_API_KEY_HEADER` | `X-Planka-Api-Key` | Header carrying the caller's Planka API key          |
+
+- **Each request uses the key in `MCP_API_KEY_HEADER`, and only that key.** A
+  request without it is refused (401). `PLANKA_API_KEY` and the agent
+  email/password are ignored in this mode, so no request can fall back to a shared
+  identity. The acting user (e.g. who is added to a new board) is the owner of the
+  key, resolved through `/api/users/me`.
+- **Stateless**: each `POST /mcp` gets a fresh MCP server; `GET` and `DELETE` return 405.
+- `GET /healthz` answers without a key.
+- **Never publish this port to the internet**: anyone who can reach it can use any
+  Planka key they hold. Expose only the gateway.
+
+Docker images (`hub2rock/planka-v2-mcp`): a git tag `vX.Y.Z` publishes `X.Y.Z`,
+`X.Y`, `X` and `latest`; every push to `main` publishes `latest` and `sha-<commit>`.
+Use `X.Y` in production: `docker compose pull` then brings bug fixes, never a new
+minor version.
+
 ## Security
 
 - Authentication is performed using a dedicated Planka user account.

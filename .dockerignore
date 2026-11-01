@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+dist
+.seed-dist
+coverage
+.env
+*.tgz
+openspec
+.agents
+.codex
+dev

@@ -1,7 +1,8 @@
 // Global variables to store user IDs
 let adminUserId: string | null = null;
 
-import { getUserIdByEmail } from "./utils.js";
+import { currentRequestContext } from "./context.js";
+import { getUserIdByEmail, plankaRequest } from "./utils.js";
 
 /**
  * Gets the admin user ID by looking up the user by email or username
@@ -13,6 +14,16 @@ import { getUserIdByEmail } from "./utils.js";
  * 4. Look up the admin user ID by username using PLANKA_ADMIN_USERNAME
  */
 export async function getAdminUserId(): Promise<string | null> {
+  // HTTP mode: the acting user is the owner of the caller's API key. Resolved
+  // once per request and never shared with the process-wide cache below.
+  const context = currentRequestContext();
+  if (context) {
+    if (context.userId === undefined) {
+      context.userId = await getCurrentUserId();
+    }
+    return context.userId;
+  }
+
   if (adminUserId) {
     return adminUserId;
   }
@@ -54,6 +65,20 @@ export async function getAdminUserId(): Promise<string | null> {
     return null;
   } catch (error) {
     console.error("Failed to get admin user ID:", error);
+    return null;
+  }
+}
+
+/**
+ * Id of the user who owns the API key of the current request (`/api/users/me`).
+ */
+async function getCurrentUserId(): Promise<string | null> {
+  try {
+    const response = (await plankaRequest("/api/users/me")) as { item?: { id?: unknown } };
+    const id = response?.item?.id;
+    return typeof id === "string" ? id : null;
+  } catch (error) {
+    console.error("Failed to resolve the current user:", error);
     return null;
   }
 }
